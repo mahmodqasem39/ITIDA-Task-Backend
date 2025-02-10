@@ -1,0 +1,6 @@
+@ITIDATask_HostAddress = http://localhost:5239
+
+GET {{ITIDATask_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
