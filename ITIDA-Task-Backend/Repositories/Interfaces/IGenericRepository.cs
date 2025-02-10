@@ -9,7 +9,7 @@ namespace ITIDATask.Repositories.Interfaces
         Task AddAsync(TEntity entity);
         Task DeleteAsync(int id);
         Task UpdateAsync(TEntity entity);
-        Task<IQueryable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate);
+        Task<List<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate);
 
     }
 }

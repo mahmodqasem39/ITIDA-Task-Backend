@@ -34,8 +34,7 @@ namespace ITIDATask.Services
             var subimtedBefor = await _unitOfWork.GetRepository<Timesheet>()
                         .FindAsync(x => x.RegisterDate == submitModel.RegisterDate && x.UserId == submitModel.UserId);
 
-            var test = subimtedBefor.FirstOrDefault();
-            if (test == null)
+            if (subimtedBefor.FirstOrDefault() == null)
             {
                 var repo = _unitOfWork.GetRepository<Timesheet>();
                 await repo.AddAsync(submitModel);

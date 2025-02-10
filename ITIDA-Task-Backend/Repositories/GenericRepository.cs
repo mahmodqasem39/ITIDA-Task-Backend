@@ -38,9 +38,9 @@ namespace ITIDATask.Repositories
             _set.Update(entity);
             await Task.CompletedTask;
         }
-        public async Task<IQueryable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
+        public async Task<List<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
         {
-            return  _set.Where(predicate);
+            return await _set.Where(predicate).ToListAsync();
         }
 
         public async Task<IReadOnlyList<TEntity>> GetAllAsync()
