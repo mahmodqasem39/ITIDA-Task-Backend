@@ -43,12 +43,12 @@ namespace ITIDATask.Controllers
                 {
                     return Ok(result);
                 }
-                return BadRequest(result.Message);
+                return BadRequest(new { errors = new[] { result.Message } });
             }
             catch (Exception ex)
             {
                 _logger.Error(ex);
-                throw;
+                return StatusCode(500, new { errors = new[] { "An internal server error occurred." } });
             }
 
         }
@@ -65,12 +65,12 @@ namespace ITIDATask.Controllers
                 {
                     return Ok(result.Payload);
                 }
-                return BadRequest(result.Message);
+                return BadRequest(new { errors = new[] { result.Message } });
             }
             catch (Exception ex)
             {
                 _logger.Error(ex);
-                throw;
+                return StatusCode(500, new { errors = new[] { "An internal server error occurred." } });
             }
         }
 
@@ -87,7 +87,7 @@ namespace ITIDATask.Controllers
                 {
                     return Ok(result.Message);
                 }
-                return BadRequest(result.Message);
+                return StatusCode(500, new { errors = new[] { "An internal server error occurred." } });
             }
             catch (Exception ex)
             {
@@ -108,7 +108,7 @@ namespace ITIDATask.Controllers
                 {
                     return Ok(result.Message);
                 }
-                return BadRequest(result.Message);
+                return StatusCode(500, new { errors = new[] { "An internal server error occurred." } });
             }
             catch (Exception ex)
             {
