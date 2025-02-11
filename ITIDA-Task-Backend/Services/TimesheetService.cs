@@ -2,18 +2,22 @@
 using ITIDATask.DAL.Entities;
 using ITIDATask.Repositories.Interfaces;
 using ITIDATask.Utitlites;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace ITIDATask.Services
 {
     public class TimesheetService : ITimesheetService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly IMapper _mapper;
 
-        public TimesheetService(IUnitOfWork unitOfWork,IMapper mapper)
+        public TimesheetService(IUnitOfWork unitOfWork,IMapper mapper,UserManager<ApplicationUser> userManage)
         {
            _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _userManager = userManage;
         }
 
 
@@ -46,8 +50,11 @@ namespace ITIDATask.Services
 
         public async Task<OperationResult> GetAllRegiterdTime(string userId)
         {
+            //var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == userId);
+            //if (user == null)
+            //    return OperationResult.NotFound("user not exisit");
             var repository = _unitOfWork.GetRepository<Timesheet>();
-            var timesheets = await repository.FindAsync(x => x.UserId == userId);
+            var timesheets = repository.FindAsync(x => x.UserId == userId).Result.OrderByDescending(x => x.RegisterDate);
             var timesheetsDto =  _mapper.Map<IEnumerable<TimeSheetModel>>(timesheets);
             return OperationResult.Succeeded(payload: timesheetsDto);
         }

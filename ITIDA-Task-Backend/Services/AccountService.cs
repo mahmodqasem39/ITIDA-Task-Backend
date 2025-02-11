@@ -39,7 +39,7 @@ namespace ITIDATask.Services
 
             if (await _userManager.FindByEmailAsync(registerModel.Email) != null)
             {
-                return OperationResult.Existed();
+                return OperationResult.Existed("user already exisit");
             }
 
             var result = await _userManager.CreateAsync(user,registerModel.Password);
