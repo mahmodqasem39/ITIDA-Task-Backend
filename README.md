@@ -15,7 +15,7 @@ dotnet build
 ```
 
 ## Running the Application
-running thes commands as following
+running these commands as following
 - navigate to /ITIDA-Task-Backend then run this command
 ```bash
 dotnet run
