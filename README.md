@@ -11,7 +11,7 @@ run the attached file .sql before running the application
 running thes commands as following
 - navigate to /ITIDA-Task-Backend then run this comand **dotnet run**
 - navigate to ITIDATask.Test to run test proj then run this command **dotnet test**
-- The backend API is documented using Swagger. You can access the API documentation at:  (http://localhost:5296/swagger/index.html)
+- The backend API is documented using Swagger. You can access the API documentation at:  (http://localhost:5296/swagger/index.html) Dev Environment only 
 
 ## Publish Files
 publish file is also attached for prod environment 
