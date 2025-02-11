@@ -25,6 +25,7 @@ namespace ITIDATask.Services
             _appSettings = settings.CurrentValue;
         }
 
+        /// <inheritdoc/>
         public async Task<OperationResult> RegisterAsync(RegisterModel registerModel)
         {
 
@@ -52,6 +53,7 @@ namespace ITIDATask.Services
             return OperationResult.Failed(payload:user);
         }
 
+        /// <inheritdoc/>
         public async Task<OperationResult> ValidateUserAsync(LoginModel loginModel)
         {
             var normalizedUserName = _userManager.NormalizeName(loginModel.Email);
@@ -94,7 +96,7 @@ namespace ITIDATask.Services
             return OperationResult.Failed("Invalid User!.");
         }
 
-        private async Task<TokenModel> GetAccessTokenAsync(ClaimsIdentity claims)
+        public async Task<TokenModel> GetAccessTokenAsync(ClaimsIdentity claims)
         {
             var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
 

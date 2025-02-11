@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using log4net;
 
 namespace ITIDATask.Controllers
 {
@@ -15,8 +16,8 @@ namespace ITIDATask.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IAccountService _accountService;
-        private readonly ILogger<AccountController> _logger;
-        public AccountController(IAccountService accountService, ILogger<AccountController> logger) 
+        private readonly ILog _logger;
+        public AccountController(IAccountService accountService, ILog logger) 
         {
             _accountService = accountService;
             _logger = logger;
@@ -28,8 +29,8 @@ namespace ITIDATask.Controllers
         {
             try
             {
-                _logger.LogInformation($"Register Function Attempetd");
-                _logger.LogDebug($"Register Params is , Email :{model.Email}");
+                _logger.Info($"Register Function Attempetd");
+                _logger.Debug($"Register Params is , Email :{model.Email}");
                 var result = await _accountService.RegisterAsync(model);
                 if (result.Success == true)
                 {
@@ -40,7 +41,7 @@ namespace ITIDATask.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error during Register");
+                _logger.Error(ex);
                 throw;
             }
         }
@@ -51,8 +52,8 @@ namespace ITIDATask.Controllers
         {
             try
             {
-                _logger.LogInformation($"Login Function Attempetd");
-                _logger.LogDebug($"Login user  Params is , Email :{model.Email}");
+                _logger.Info($"Login Function Attempetd");
+                _logger.Debug($"Login user  Params is , Email :{model.Email}");
                 var result = await _accountService.ValidateUserAsync(model);
                 if (result.Success == true)
                 {
@@ -63,7 +64,7 @@ namespace ITIDATask.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error during Register");
+                _logger.Error(ex);
                 throw;
             }
         }

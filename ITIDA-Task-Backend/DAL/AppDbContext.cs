@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.Extensions.Options;
 using System;
 using System.Data;
@@ -21,6 +22,10 @@ namespace ITIDATask.DAL
         {
             base.OnModelCreating(modelBuilder);
 
+            var timeOnlyConverter = new ValueConverter<TimeOnly, TimeSpan>(
+                v => v.ToTimeSpan(),
+                v => TimeOnly.FromTimeSpan(v));
+
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
               modelBuilder.Entity<ApplicationUser>()
                 .HasMany(u => u.Timesheets) 
@@ -30,7 +35,7 @@ namespace ITIDATask.DAL
             modelBuilder.Entity<Timesheet>(entity =>
             {
                 entity.Property(e => e.TotalLoggedHours)
-                      .HasComputedColumnSql("EXTRACT(EPOCH FROM (\"LogoutTime\" - \"LoginTime\")) / 3600.0", true);
+                      .HasComputedColumnSql("TIMESTAMPDIFF(SECOND, LoginTime, LogoutTime) / 3600.0", true);
             });
         }
 

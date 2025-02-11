@@ -49,9 +49,9 @@ namespace ITIDATask.Utitlites
 
     public class SubmitTimeModel
     {
-        public DateOnly RegisterDate { get; set; }
-        public TimeOnly LoginTime { get; set; }
-        public TimeOnly LogoutTime { get; set; }
+        public DateTime RegisterDate { get; set; }
+        public TimeSpan LoginTime { get; set; }
+        public TimeSpan LogoutTime { get; set; }
         public string UserID { get; set; }
 
     }
@@ -61,11 +61,11 @@ namespace ITIDATask.Utitlites
     {
         public int Id { get; set; }
         [Required]
-        public DateOnly RegisterDate { get; set; }
+        public DateOnly RegisterDate { get ; set; }
         [Required]
-        public TimeOnly LoginTime { get; set; }
+        public TimeSpan LoginTime { get; set; }
         [Required]
-        public TimeOnly LogoutTime { get; set; }
+        public TimeSpan LogoutTime { get; set; }
         [Required]
         public int TotalLoggedHours { get; set; }
         public string UserID { get; set; }
@@ -75,9 +75,9 @@ namespace ITIDATask.Utitlites
     public class UpdateSubmitedTimetModel
     {
         public int Id { get; set; }
-        public DateOnly RegisterDate { get; set; }
-        public TimeOnly LoginTime { get; set; }
-        public TimeOnly LogoutTime { get; set; }
+        public DateTime RegisterDate { get; set; }
+        public TimeSpan LoginTime { get; set; }
+        public TimeSpan LogoutTime { get; set; }
         public string UserID { get; set; }
 
     }

@@ -12,6 +12,7 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using log4net.Config;
 using log4net;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,13 +27,12 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddDefaultTokenProviders();
 
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
+//builder.Services.AddScoped<IMigrator, NoLockMigrator>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    options.UseNpgsql(connectionString);
-    options.UseLoggerFactory(null);
-    options.EnableSensitiveDataLogging(false);
+    options.UseMySQL(connectionString);
 });
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -69,6 +69,8 @@ builder.Services.AddSwaggerGen(c =>
 builder.Logging.AddLog4Net("log4net.config");
 XmlConfigurator.Configure(new FileInfo("log4net.config"));
 builder.Services.AddSingleton(LogManager.GetLogger(typeof(Program)));
+//XmlConfigurator.Configure(new FileInfo("log4net.config"));
+//builder.Services.AddSingleton(LogManager.GetLogger(typeof(Program)));
 
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

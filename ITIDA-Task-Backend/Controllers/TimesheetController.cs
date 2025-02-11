@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Diagnostics;
 using System;
+using log4net;
 
 namespace ITIDATask.Controllers
 {
@@ -18,10 +19,10 @@ namespace ITIDATask.Controllers
     {
         private readonly ITimesheetService _timesheetservice;
         private readonly IMapper _mapper;
-        private readonly ILogger<AccountController> _logger;
+        private readonly ILog _logger;
 
 
-        public TimesheetController(ITimesheetService timesheetservice, IMapper mapper, ILogger<AccountController> logger)
+        public TimesheetController(ITimesheetService timesheetservice, IMapper mapper, ILog logger)
         {
             _timesheetservice = timesheetservice;
             _mapper = mapper;
@@ -34,8 +35,8 @@ namespace ITIDATask.Controllers
             try
             {
                 var timesheet = _mapper.Map<Timesheet>(timeModel);
-                _logger.LogInformation("Submit Registerd Time Function Attemped ..");
-                _logger.LogDebug($"SubmitRegisterdTime Params is Date : {timeModel.RegisterDate} , " +
+                _logger.Info("Submit Registerd Time Function Attemped ..");
+                _logger.Debug($"SubmitRegisterdTime Params is Date : {timeModel.RegisterDate} , " +
                     $"loginTime : {timeModel.LoginTime} , LogoutTime : {timeModel.LogoutTime} , User : {timeModel.UserID}" );
                 var result = await _timesheetservice.SubmitRegisterdTime(timesheet);
                 if (result.Success == true)
@@ -46,7 +47,7 @@ namespace ITIDATask.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error during Register");
+                _logger.Error(ex);
                 throw;
             }
 
@@ -57,11 +58,8 @@ namespace ITIDATask.Controllers
         {
             try
             {
-                _logger.LogInformation("GetAll Submited Time Function Attemped ..");
-#if DEBUG
-_logger.LogDebug("This is a debug message");
-#endif
-                _logger.LogDebug($"GetAll Registerd Timm  Params is user : {userId} ");
+                _logger.Info("GetAll Submited Time Function Attemped ..");
+                _logger.Debug($"GetAll Registerd Timm  Params is user : {userId} ");
                  var result = await _timesheetservice.GetAllRegiterdTime(userId);
                 if (result.Success == true)
                 {
@@ -71,7 +69,7 @@ _logger.LogDebug("This is a debug message");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error during Register");
+                _logger.Error(ex);
                 throw;
             }
         }
@@ -82,8 +80,8 @@ _logger.LogDebug("This is a debug message");
         {
             try
             {
-                _logger.LogInformation("Updated Submited Time Function Attemped ..");
-                _logger.LogDebug($"Updated Submited Time  Params is user : {model.UserID}, LoginTime :{model.LoginTime} , LogoutTime :{model.LogoutTime} ");
+                _logger.Info("Updated Submited Time Function Attemped ..");
+                _logger.Debug($"Updated Submited Time  Params is user : {model.UserID}, LoginTime :{model.LoginTime} , LogoutTime :{model.LogoutTime} ");
                 var result = await _timesheetservice.UpdateSubmitedTime(model);
                 if (result.Success == true)
                 {
@@ -93,7 +91,7 @@ _logger.LogDebug("This is a debug message");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error during update time");
+                _logger.Error(ex);
                 throw;
             }
         }
@@ -103,8 +101,8 @@ _logger.LogDebug("This is a debug message");
         {
             try
             {
-                _logger.LogInformation("Delete Submited TimeFunction Attemped ..");
-                _logger.LogDebug($"Updated Submited Time  Params is id: {id}"); 
+                _logger.Info("Delete Submited TimeFunction Attemped ..");
+                _logger.Debug($"Updated Submited Time  Params is id: {id}"); 
                 var result = await _timesheetservice.DeleteSubmitedTime(id);
                 if (result.Success == true)
                 {
@@ -114,7 +112,7 @@ _logger.LogDebug("This is a debug message");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error during update time");
+                _logger.Error(ex);
                 throw;
             }
         }

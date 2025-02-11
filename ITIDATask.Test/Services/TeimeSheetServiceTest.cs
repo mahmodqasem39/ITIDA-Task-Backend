@@ -39,9 +39,9 @@ public class TimesheetServiceTests
     {
         var submitModel = new Timesheet
         {
-            RegisterDate = DateOnly.FromDateTime(DateTime.Now.AddDays(1)),
-            LoginTime = TimeOnly.Parse("08:00"),
-            LogoutTime = TimeOnly.Parse("17:00"),
+            RegisterDate = DateTime.Now.AddDays(1),
+            LoginTime = TimeSpan.Parse("08:00"),
+            LogoutTime = TimeSpan.Parse("17:00"),
             UserId = "user"
         };
 
@@ -56,9 +56,9 @@ public class TimesheetServiceTests
     {
         var submitModel = new Timesheet
         {
-            RegisterDate = DateOnly.FromDateTime(DateTime.Now),
-            LoginTime = TimeOnly.Parse("17:00"),
-            LogoutTime = TimeOnly.Parse("8:00"),
+            RegisterDate = DateTime.Now,
+            LoginTime = TimeSpan.Parse("17:00"),
+            LogoutTime = TimeSpan.Parse("8:00"),
             UserId = "user"
         };
 
@@ -74,9 +74,9 @@ public class TimesheetServiceTests
 
         var timesheet = new Timesheet
         {
-            RegisterDate = DateOnly.FromDateTime(DateTime.Now),
-            LoginTime = TimeOnly.Parse("08:00"),
-            LogoutTime = TimeOnly.Parse("17:00"),
+            RegisterDate = DateTime.Now,
+            LoginTime = TimeSpan.Parse("08:00"),
+            LogoutTime = TimeSpan.Parse("17:00"),
             UserId = "UserId",
         };
 
@@ -102,9 +102,9 @@ public class TimesheetServiceTests
     {
         var timesheet = new Timesheet
         {
-            RegisterDate = DateOnly.FromDateTime(DateTime.Now),
-            LoginTime = TimeOnly.Parse("08:00"),
-            LogoutTime = TimeOnly.Parse("17:00"),
+            RegisterDate = DateTime.Now,
+            LoginTime = TimeSpan.Parse("08:00"),
+            LogoutTime = TimeSpan.Parse("17:00"),
             UserId = "UserId",
         };
 

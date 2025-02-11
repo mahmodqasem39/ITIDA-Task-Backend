@@ -11,7 +11,9 @@ using MockQueryable;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -31,7 +33,7 @@ namespace ITIDATask.Test.Services
             _signInManagerMock = new Mock<SignInManager<ApplicationUser>>(
             _userManagerMock.Object, Mock.Of<IHttpContextAccessor>(),Mock.Of<IUserClaimsPrincipalFactory<ApplicationUser>>(), null, null, null, null);
             _appSettingsMock = new Mock<IOptionsMonitor<AppSettings>>();
-            _appSettingsMock.Setup(ap => ap.CurrentValue).Returns(new AppSettings { Secret = "testKey" });
+            _appSettingsMock.Setup(ap => ap.CurrentValue).Returns(new AppSettings { Secret = "testKaU9MMXFmWVlfbjdoNjRtbUNkYjdtVGlicTNWZVVmVWJFa0pyZUd1SW9OREVYSEdtc0JJYTI5UENey" });
             _accountService = new AccountService(_userManagerMock.Object, _signInManagerMock.Object, _appSettingsMock.Object);
 
         }

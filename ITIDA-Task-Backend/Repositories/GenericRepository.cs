@@ -40,12 +40,12 @@ namespace ITIDATask.Repositories
         }
         public async Task<List<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
         {
-            return await _set.Where(predicate).ToListAsync();
+            return await _set.Where(predicate).AsNoTracking().ToListAsync();
         }
 
         public async Task<IReadOnlyList<TEntity>> GetAllAsync()
         {
-            return await _set.ToListAsync();
+            return await _set.AsNoTracking().ToListAsync();
         }
 
         public async Task<TEntity> GetByIdAsync(int id)

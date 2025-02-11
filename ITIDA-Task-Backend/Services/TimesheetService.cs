@@ -21,11 +21,11 @@ namespace ITIDATask.Services
         }
 
 
-
+        /// <inheritdoc/>
         public async Task<OperationResult> SubmitRegisterdTime(Timesheet submitModel)
         {
             var currentDate = DateOnly.FromDateTime(DateTime.Now); 
-            if(submitModel.RegisterDate > currentDate)
+            if(DateOnly.FromDateTime(submitModel.RegisterDate) > currentDate)
             {
                 return OperationResult.Failed("Date cannot be in the future");
             }
@@ -48,6 +48,8 @@ namespace ITIDATask.Services
             return OperationResult.Existed("This date Is submited befor for this user");
         }
 
+
+        /// <inheritdoc/>
         public async Task<OperationResult> GetAllRegiterdTime(string userId)
         {
             var user = await _userManager.FindByIdAsync(userId);
@@ -62,17 +64,18 @@ namespace ITIDATask.Services
             return OperationResult.NotFound("user not exisit");
         }
 
+        /// <inheritdoc/>
         public async Task<OperationResult> UpdateSubmitedTime(UpdateSubmitedTimetModel model)
         {
             var user = await _userManager.FindByIdAsync(model.UserID);
             if (user != null)
             {
-                var item = await _unitOfWork.GetRepository<Timesheet>().GetByIdAsync(model.Id);
+                var repository = _unitOfWork.GetRepository<Timesheet>();
+                var item = await repository.GetByIdAsync(model.Id);
                 if (item != null)
                 {
-                    var timesheet = _mapper.Map<Timesheet>(model);
-                    var repository = _unitOfWork.GetRepository<Timesheet>();
-                    await repository.UpdateAsync(timesheet);
+                    _mapper.Map(model, item);  
+                    await repository.UpdateAsync(item);
                     await _unitOfWork.SaveChangesAsync();
                     return OperationResult.Succeeded("Data updated");
                 }
@@ -82,7 +85,7 @@ namespace ITIDATask.Services
 
         }
 
-
+        /// <inheritdoc/>
         public async Task<OperationResult> DeleteSubmitedTime(int id)
         {
             var repository = _unitOfWork.GetRepository<Timesheet>();
