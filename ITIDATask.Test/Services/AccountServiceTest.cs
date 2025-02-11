@@ -27,7 +27,8 @@ namespace ITIDATask.Test.Services
 
         public AccountServiceTest()
         {
-            _userManagerMock = new Mock<UserManager<ApplicationUser>>(Mock.Of<IUserStore<ApplicationUser>>(), null, null, null, null, null, null, null, null); _signInManagerMock = new Mock<SignInManager<ApplicationUser>>(
+            _userManagerMock = new Mock<UserManager<ApplicationUser>>(Mock.Of<IUserStore<ApplicationUser>>(), null, null, null, null, null, null, null, null); 
+            _signInManagerMock = new Mock<SignInManager<ApplicationUser>>(
             _userManagerMock.Object, Mock.Of<IHttpContextAccessor>(),Mock.Of<IUserClaimsPrincipalFactory<ApplicationUser>>(), null, null, null, null);
             _appSettingsMock = new Mock<IOptionsMonitor<AppSettings>>();
             _appSettingsMock.Setup(ap => ap.CurrentValue).Returns(new AppSettings { Secret = "testKey" });
@@ -86,8 +87,8 @@ namespace ITIDATask.Test.Services
         [Fact]
         public async Task ValidateUserAsync_ValidUserValidPassword_ReturnsSucceeded()
         {
-            var loginModel = new LoginModel { Email = "test@example.com", Password = "CorrectPassword" };
-            var user = new ApplicationUser { Id = "1", Email = "test@example.com", UserName = "testuser", PhoneNumber = "1234567890", Name = "Test User" };
+            var loginModel = new LoginModel { Email = "test@test.com", Password = "CorrectPassword" };
+            var user = new ApplicationUser { Id = "1", Email = "test@test.com", UserName = "testuser", PhoneNumber = "01234567890", Name = "Test" };
             _userManagerMock.Setup(um => um.Users).Returns((new List<ApplicationUser> { user }).AsQueryable().BuildMock());
             _signInManagerMock.Setup(sm => sm.CheckPasswordSignInAsync(user, loginModel.Password, true)).ReturnsAsync(SignInResult.Success);
 

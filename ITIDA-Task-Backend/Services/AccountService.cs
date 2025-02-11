@@ -28,7 +28,7 @@ namespace ITIDATask.Services
         public async Task<OperationResult> RegisterAsync(RegisterModel registerModel)
         {
 
-            var user = new DAL.Entities.ApplicationUser
+            var user = new ApplicationUser
             {
                 UserName = registerModel.Email,
                 Email = registerModel.Email,

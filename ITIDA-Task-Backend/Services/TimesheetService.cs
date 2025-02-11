@@ -50,22 +50,36 @@ namespace ITIDATask.Services
 
         public async Task<OperationResult> GetAllRegiterdTime(string userId)
         {
-            //var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == userId);
-            //if (user == null)
-            //    return OperationResult.NotFound("user not exisit");
-            var repository = _unitOfWork.GetRepository<Timesheet>();
-            var timesheets = repository.FindAsync(x => x.UserId == userId).Result.OrderByDescending(x => x.RegisterDate);
-            var timesheetsDto =  _mapper.Map<IEnumerable<TimeSheetModel>>(timesheets);
-            return OperationResult.Succeeded(payload: timesheetsDto);
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user != null)
+            {
+                var repository = _unitOfWork.GetRepository<Timesheet>();
+                var timesheets = repository.FindAsync(x => x.UserId == userId).Result.OrderByDescending(x => x.RegisterDate);
+                var timesheetsDto = _mapper.Map<IEnumerable<TimeSheetModel>>(timesheets);
+                return OperationResult.Succeeded(payload: timesheetsDto);
+
+            }
+            return OperationResult.NotFound("user not exisit");
         }
 
         public async Task<OperationResult> UpdateSubmitedTime(UpdateSubmitedTimetModel model)
         {
-            var timesheet = _mapper.Map<Timesheet>(model);
-            var repository = _unitOfWork.GetRepository<Timesheet>();
-            await repository.UpdateAsync(timesheet);
-            await _unitOfWork.SaveChangesAsync();
-            return OperationResult.Succeeded("Data updated");
+            var user = await _userManager.FindByIdAsync(model.UserID);
+            if (user != null)
+            {
+                var item = await _unitOfWork.GetRepository<Timesheet>().GetByIdAsync(model.Id);
+                if (item != null)
+                {
+                    var timesheet = _mapper.Map<Timesheet>(model);
+                    var repository = _unitOfWork.GetRepository<Timesheet>();
+                    await repository.UpdateAsync(timesheet);
+                    await _unitOfWork.SaveChangesAsync();
+                    return OperationResult.Succeeded("Data updated");
+                }
+                return OperationResult.NotFound();
+            }
+            return OperationResult.NotFound("user not exisit");
+
         }
 
 

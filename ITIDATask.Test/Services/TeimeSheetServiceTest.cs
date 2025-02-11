@@ -3,6 +3,7 @@ using ITIDATask.DAL.Entities;
 using ITIDATask.Repositories.Interfaces;
 using ITIDATask.Services;
 using ITIDATask.Utitlites;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -11,23 +12,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using static System.Net.Mime.MediaTypeNames;
 
 public class TimesheetServiceTests
 {
     private readonly Mock<IUnitOfWork> _unitOfWorkMock;
     private readonly Mock<IMapper> _mapperMock;
+    private readonly Mock<UserManager<ApplicationUser>> _userManagerMock;
     private readonly Mock<IGenericRepository<Timesheet>> _timesheetRepoMock;
-    private readonly Mock<UserManager<ApplicationUser>> _mockUserManager;
     private readonly TimesheetService _timesheetService;
 
     public TimesheetServiceTests()
     {
-        var store = new Mock<IUserStore<ApplicationUser>>();
+        _userManagerMock = new Mock<UserManager<ApplicationUser>>(Mock.Of<IUserStore<ApplicationUser>>(), null, null, null, null, null, null, null, null);
         _unitOfWorkMock = new Mock<IUnitOfWork>();
         _mapperMock = new Mock<IMapper>();
         _timesheetRepoMock = new Mock<IGenericRepository<Timesheet>>();
-        _mockUserManager = new Mock<UserManager<ApplicationUser>>(store.Object, null, null, null, null, null, null, null, null);
-        _timesheetService = new TimesheetService(_unitOfWorkMock.Object, _mapperMock.Object,_mockUserManager.Object);
+        _timesheetService = new TimesheetService(_unitOfWorkMock.Object, _mapperMock.Object,_userManagerMock.Object);
     }
 
 
@@ -123,16 +125,12 @@ public class TimesheetServiceTests
     }
     #endregion
 
+    #region GetAll Submited time for user 
     [Fact]
-    public async Task GetAllRegisteredTime_UserDoesNotExist_ReturnsNotFound()
+    public async Task GetAllRegisteredTime_UserNotExist_ReturnsNotFound()
     {
-        var userId = "test-user";
-
-        var user = new ApplicationUser { Id = userId };
-
-        //_mockUserManager.Setup(x => x.Users).Returns(new List<ApplicationUser>().AsQueryable());
-        _mockUserManager.Setup(x => x.Users).Returns(new List<ApplicationUser> { user }.AsQueryable());
-
+        var userId = "userId";
+        _userManagerMock.Setup(um => um.FindByIdAsync(userId)).ReturnsAsync((ApplicationUser)null);
         var result = await _timesheetService.GetAllRegiterdTime(userId);
 
         Assert.False(result.Success);
@@ -147,6 +145,7 @@ public class TimesheetServiceTests
         var timesheets = new List<Timesheet> { new Timesheet { UserId = userId } };
         var timesheetsDto = new List<TimeSheetModel> { new TimeSheetModel() };
 
+        _userManagerMock.Setup(um => um.FindByIdAsync(userId)).ReturnsAsync(user);
         _timesheetRepoMock.Setup(r => r.FindAsync(x => x.UserId == userId)).ReturnsAsync(timesheets);
         _unitOfWorkMock.Setup(u => u.GetRepository<Timesheet>()).Returns(_timesheetRepoMock.Object);
         _mapperMock.Setup(m => m.Map<IEnumerable<TimeSheetModel>>(timesheets)).Returns(timesheetsDto);
@@ -154,33 +153,64 @@ public class TimesheetServiceTests
         var result = await _timesheetService.GetAllRegiterdTime(userId);
         Assert.True(result.Success);
     }
+    #endregion
 
+    #region Update Submited time for user 
+    [Fact]
+    public async Task UpdateSubmitedTime_UserNotExist_ReturnsNotFound()
+    {
+        var model = new UpdateSubmitedTimetModel();
+        model.UserID = "userId";
+        _userManagerMock.Setup(um => um.FindByIdAsync(model.UserID)).ReturnsAsync((ApplicationUser)null);
+        var result = await _timesheetService.UpdateSubmitedTime(model);
+
+        Assert.False(result.Success);
+        Assert.Equal("user not exisit", result.Message);
+    }
+
+    [Fact]
+    public async Task UpdateSubmitedTime_InvalidId_ReturnsNotFound()
+    {
+        var model = new UpdateSubmitedTimetModel();
+        model.Id = 1;
+        model.UserID = "userId";
+        _userManagerMock.Setup(um => um.FindByIdAsync(model.UserID)).ReturnsAsync(new ApplicationUser());
+        _timesheetRepoMock.Setup(r => r.GetByIdAsync(model.Id)).ReturnsAsync((Timesheet)null);
+        _unitOfWorkMock.Setup(u => u.GetRepository<Timesheet>()).Returns(_timesheetRepoMock.Object);
+        var result = await _timesheetService.UpdateSubmitedTime(model);
+
+        Assert.False(result.Success);
+        Assert.Equal("Item Not Found!.", result.Message);
+    }
 
     [Fact]
     public async Task UpdateSubmitedTime_ValidModel_UpdatesTimesheet()
     {
         var model = new UpdateSubmitedTimetModel();
+        model.Id = 1;
+        model.UserID = "userId";
         var timesheet = new Timesheet();
-        var repoMock = new Mock<IGenericRepository<Timesheet>>();
-
+        _userManagerMock.Setup(um => um.FindByIdAsync(model.UserID)).ReturnsAsync(new ApplicationUser());
+        _timesheetRepoMock.Setup(r => r.GetByIdAsync(model.Id)).ReturnsAsync(timesheet);
+        _unitOfWorkMock.Setup(u => u.GetRepository<Timesheet>()).Returns(_timesheetRepoMock.Object);
         _mapperMock.Setup(m => m.Map<Timesheet>(model)).Returns(timesheet);
-        repoMock.Setup(r => r.UpdateAsync(timesheet)).Returns(Task.CompletedTask);
-        _unitOfWorkMock.Setup(u => u.GetRepository<Timesheet>()).Returns(repoMock.Object);
+        _timesheetRepoMock.Setup(r => r.UpdateAsync(timesheet)).Returns(Task.CompletedTask);
+        _unitOfWorkMock.Setup(u => u.GetRepository<Timesheet>()).Returns(_timesheetRepoMock.Object);
         _unitOfWorkMock.Setup(u => u.SaveChangesAsync()).Returns(Task.CompletedTask);
 
         var result = await _timesheetService.UpdateSubmitedTime(model);
         Assert.True(result.Success);
 
     }
+    #endregion
 
+    #region Delete Submited time 
     [Fact]
     public async Task DeleteSubmitedTime_InvalidId_ReturnsNotFound()
     {
         var timesheetId = 1;
-        var repoMock = new Mock<IGenericRepository<Timesheet>>();
-
-        repoMock.Setup(r => r.GetByIdAsync(timesheetId)).ReturnsAsync((Timesheet)null);
-        _unitOfWorkMock.Setup(u => u.GetRepository<Timesheet>()).Returns(repoMock.Object);
+        _timesheetRepoMock.Setup(r => r.GetByIdAsync(timesheetId)).ReturnsAsync((Timesheet)null);
+        _unitOfWorkMock.Setup(u => u.GetRepository<Timesheet>()).Returns(_timesheetRepoMock.Object);
         var result = await _timesheetService.DeleteSubmitedTime(timesheetId);
 
         Assert.False(result.Success);
@@ -202,6 +232,9 @@ public class TimesheetServiceTests
         var result = await _timesheetService.DeleteSubmitedTime(timesheetId);
         Assert.True(result.Success);
     }
+    #endregion
+
+
 
 
 }
