@@ -1,5 +1,3 @@
-# Backend README
-
 ## Prerequisites
 Before run the application , ensure you have the following installed:
 - [.NET Core SDK 9](https://dotnet.microsoft.com/download/dotnet/9.0)
