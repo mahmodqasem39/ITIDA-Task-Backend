@@ -118,6 +118,11 @@ namespace ITIDATask.Services
             };
         }
 
+        public async Task SignOut()
+        {
+            await _signInManager.SignOutAsync();
+        }
+
     }
 }
 

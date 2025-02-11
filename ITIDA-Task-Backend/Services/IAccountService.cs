@@ -6,6 +6,6 @@ namespace ITIDATask.Services
     {
         Task<OperationResult> RegisterAsync(RegisterModel registerModel);
         Task<OperationResult> ValidateUserAsync(LoginModel registerModel);
-
+        Task SignOut();
     }
 }

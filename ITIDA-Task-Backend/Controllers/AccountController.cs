@@ -1,7 +1,12 @@
 ﻿using ITIDATask.Services;
 using ITIDATask.Utitlites;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace ITIDATask.Controllers
 {
@@ -61,6 +66,14 @@ namespace ITIDATask.Controllers
                 _logger.LogError(ex, "Error during Register");
                 throw;
             }
+        }
+
+        [HttpPost("Logout")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> LogOut()
+        {
+            await _accountService.SignOut();
+            return Ok("sigend out succssfully");
         }
     }
 }
